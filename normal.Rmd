@@ -1,0 +1,15 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Normal de média $\mu$ e variância $\sigma^2$ ($X \sim N(\mu,\sigma^2)$), então as seguintes transformações são válidas:
+
+
+- $Y = \frac{(X-\mu)}{\sigma} \sim N(0,1)$
+- $Y = X + a \sim N(\mu + a, \sigma^2)$
+- $Y = bX \sim N(\mu,\sigma^2 b^2)$

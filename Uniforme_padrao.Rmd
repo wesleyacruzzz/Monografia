@@ -1,0 +1,15 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Uniforme Padrão ($X \sim U(0,1)$), então as seguintes transformações são válidas:
+
+
+- $Y = 1 - X^{1/n} \sim Beta(1,n)$
+- $Y = X^2 \sim beta(1/2,1)$
+- $Y = \frac{-ln(X)}{\lambda} \sim exp(\lambda)$

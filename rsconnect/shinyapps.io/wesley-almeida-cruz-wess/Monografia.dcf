@@ -1,0 +1,12 @@
+name: Monografia
+title: Monografia
+username:
+account: wesley-almeida-cruz-wess
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3623426
+bundleId: 4997905
+url: https://wesley-almeida-cruz-wess.shinyapps.io/Monografia/
+when: 1630695584.01382
+asMultiple: FALSE
+asStatic: FALSE

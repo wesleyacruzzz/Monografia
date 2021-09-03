@@ -1,0 +1,12 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Qui Quadrado com $n$ graus de liberdade ($X \sim \chi^2_{(n)}$), então as seguintes transformações são válidas:
+
+- $Y = \frac{X}{c} \sim Gama(\frac{n}{2},\frac{c}{2})$

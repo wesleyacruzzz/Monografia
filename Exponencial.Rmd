@@ -1,0 +1,13 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Exponencial de taxa $\lambda$ ($X \sim Exp(\lambda)$), então as seguintes transformações são válidas:
+
+
+- $Y = \lambda X \sim Exp(1)$

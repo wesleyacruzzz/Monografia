@@ -1,0 +1,13 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Beta Padrão ($X \sim Beta(\alpha,1)$), então as seguintes transformações são válidas:
+
+
+- $Y = -ln(X) \sim Exp(\alpha)$

@@ -1,0 +1,13 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Gama ($X \sim Gama(\alpha,\beta)$), então as seguintes transformações são válidas:
+
+
+- $Y \sim Gama(\frac{c}{2},\frac{1}{2}) \rightarrow Y \sim \chi^{2}_{(c)}$

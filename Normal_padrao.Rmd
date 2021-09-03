@@ -1,0 +1,13 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Normal de média $0$ e variância $1$ ($X \sim N(0,1)$), então as seguintes transformações são válidas:
+
+
+- $Y = X^2 \sim \chi^2_{(1)}$

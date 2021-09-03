@@ -1,0 +1,13 @@
+---
+title: ""
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Seja $X$ uma variável aleatória com distribuição Beta ($X \sim Beta(\alpha,\beta)$), então as seguintes transformações são válidas:
+
+
+- $Y = 1 - X \sim Beta(\beta,\alpha)$
