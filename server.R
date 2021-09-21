@@ -91,7 +91,7 @@ shinyServer(function(input, output, session) {
                     cellWidths = c("33%","33%","33%")))
         }
         else if (input$var1 == "Normal Padrão"){
-        
+            
         }
         else if (input$var1 == "Exponencial"){
             wellPanel(
@@ -141,8 +141,8 @@ shinyServer(function(input, output, session) {
     output$vizu2 <- renderUI({
         if (input$prob1 == "Normal"){
             wellPanel(
-                splitLayout(numericInput("min1","Primeiro quartil",value = -1.95),
-                            numericInput("max1","Segundo quaril",value = 1.95),
+                splitLayout(numericInput("min1","Primeiro quartil",value = -1.96),
+                            numericInput("max1","Segundo quaril",value = 1.96),
                             cellWidths = c("50%","50%")),
                 splitLayout(
                     numericInput('a11',label='Média', value=0),
@@ -153,13 +153,13 @@ shinyServer(function(input, output, session) {
         }
         else if (input$prob1 == "t-Student"){
             wellPanel(
-                splitLayout(numericInput("min1","Primeiro quantil",value = -1.95),
-                            numericInput("max1","Segundo quantil",value = 1.95),
+                splitLayout(numericInput("min1","Primeiro quantil",value = -1.96),
+                            numericInput("max1","Segundo quantil",value = 1.96),
                             cellWidths = c("50%","50%")),
                 numericInput('a11',label='Graus de Liberdade', value=100),
                 infoBox("Probabilidade: ", textOutput("textt"), color = "blue", width = 20))
         }
-        else if (input$prob1 == "f-Snedecor"){
+        else if (input$prob1 == "F-Snedecor"){
             wellPanel(
                 splitLayout(numericInput("min1","Primeiro quantil",value = 0.4),
                             numericInput("max1","Segundo quantil",value = 2.3),
@@ -249,17 +249,33 @@ shinyServer(function(input, output, session) {
             s2 <- median(simul)
             s3 <- getmode1(simul)
             
-            p <- qplot(simul, geom = 'blank') +   
-                geom_histogram(aes(y = ..density..),
-                               alpha = 0.4, fill = "cadetblue4", color = "white") +
-                geom_vline(xintercept=s1,col="red", alpha = 0.7) +
-                geom_vline(xintercept=s2,col="blue", alpha = 0.7) +
-                geom_vline(xintercept=s3,col="green", alpha = 0.7) +
-                ggtitle(str_replace("Histograma de uma variável aleatória ttt","ttt",vet))+
-                ylab(" ")+
-                xlab(expression(x))+
-                theme_light()+
-                theme(panel.grid = element_blank())
+            if (vet %in% "Normal" & a==0 & b==1){
+                p <- qplot(simul, geom = 'blank') +   
+                    geom_histogram(aes(y = ..density..),
+                                   alpha = 0.4, fill = "cadetblue4", color = "white") +
+                    geom_vline(xintercept=s1,col="red", alpha = 0.7) +
+                    geom_vline(xintercept=s2,col="blue", alpha = 0.7) +
+                    geom_vline(xintercept=s3,col="green", alpha = 0.7) +
+                    ggtitle(str_replace("Histograma de uma variável aleatória ttt Padrão","ttt",vet))+
+                    ylab(" ")+
+                    xlab(expression(x))+
+                    theme_light()+
+                    theme(panel.grid = element_blank(),
+                          title = element_text(size = 8))
+            } else {
+                p <- qplot(simul, geom = 'blank') +   
+                    geom_histogram(aes(y = ..density..),
+                                   alpha = 0.4, fill = "cadetblue4", color = "white") +
+                    geom_vline(xintercept=s1,col="red", alpha = 0.7) +
+                    geom_vline(xintercept=s2,col="blue", alpha = 0.7) +
+                    geom_vline(xintercept=s3,col="green", alpha = 0.7) +
+                    ggtitle(str_replace("Histograma de uma variável aleatória ttt","ttt",vet))+
+                    ylab(" ")+
+                    xlab(expression(x))+
+                    theme_light()+
+                    theme(panel.grid = element_blank(),
+                          title = element_text(size = 8))
+            }
             
         } else {
             # Conditions ####
@@ -291,7 +307,8 @@ shinyServer(function(input, output, session) {
                 xlab(expression(x))+
                 theme_light()+
                 theme(panel.grid = element_blank(),
-                      legend.position = "None")
+                      legend.position = "None",
+                      title = element_text(size = 8))
         }
         return(list(simul,p))
     }
@@ -403,7 +420,8 @@ shinyServer(function(input, output, session) {
         distr_co <- c("Normal","Exponencial","Beta","Gama","Uniforme Contínua")
         vet <- x
         func <- NULL
-        
+        x1 <- a
+        x2 <- b
         s4 <- as.numeric(unlist(choice2(x,n,a,b,c)[1]))
         s5 <- as.numeric(unlist(choice2(x,n,a,b,c)[2]))
         s6 <- as.numeric(unlist(choice2(x,n,a,b,c)[3]))
@@ -436,18 +454,40 @@ shinyServer(function(input, output, session) {
                 cond <- seq(a,b,length.out = 1000)
             }
             
-            p <- qplot(cond,geom = 'blank') +   
-                stat_function(fun = func, n=length(cond),
-                              args = argu, aes(colour = x))+
-                geom_vline(xintercept = s4, col="red", alpha = 0.7)+
-                geom_vline(xintercept = s5,col="blue", alpha = 0.7) +
-                geom_vline(xintercept = s6,col="green", alpha = 0.7) +
-                theme_light()+
-                ggtitle(str_replace("Função de densidade de uma variável aleatória ttt","ttt",vet))+
-                ylab("Função densidade")+
-                xlab(expression(x)) +
-                theme(panel.grid = element_blank(),
-                      legend.position = "None")
+            if (vet %in% "Normal" & x1==0 & x2==1){
+                p <- qplot(cond,geom = 'blank') +   
+                    stat_function(fun = func, n=length(cond),
+                                  args = argu,
+                                  color = "red",
+                                  inherit.aes = FALSE)+
+                    geom_vline(xintercept = s4, col="red", alpha = 0.7)+
+                    geom_vline(xintercept = s5,col="blue", alpha = 0.7) +
+                    geom_vline(xintercept = s6,col="green", alpha = 0.7) +
+                    theme_light()+
+                    ggtitle(str_replace("Função de probabilidade de uma variável aleatória ttt Padrão","ttt",vet))+
+                    theme_light()+
+                    ylab("Função densidade")+
+                    xlab(expression(x)) +
+                    theme(panel.grid = element_blank(),
+                          legend.position = "None",
+                          title = element_text(size = 8))
+            } else {
+                p <- qplot(cond,geom = 'blank') +
+                    stat_function(fun = func, n=length(cond),
+                                  args = argu,
+                                  color = "red",
+                                  inherit.aes = FALSE)+
+                    geom_vline(xintercept = s4, col="red", alpha = 0.7)+
+                    geom_vline(xintercept = s5,col="blue", alpha = 0.7) +
+                    geom_vline(xintercept = s6,col="green", alpha = 0.7) +
+                    theme_light()+
+                    ggtitle(str_replace("Função de densidade de uma variável aleatória ttt","ttt",vet))+
+                    ylab("Função densidade")+
+                    xlab(expression(x)) +
+                    theme(panel.grid = element_blank(),
+                          legend.position = "None",
+                          title = element_text(size = 8))
+            }
             
         } else {
             # Conditions ####
@@ -479,7 +519,8 @@ shinyServer(function(input, output, session) {
                 ylab("Função de probabilidade")+
                 xlab(expression(x))+
                 theme(panel.grid = element_blank(),
-                      legend.position = "None")
+                      legend.position = "None",
+                      title = element_text(size=8))
         }
         return(p)
     }
@@ -511,13 +552,25 @@ shinyServer(function(input, output, session) {
                 cumulative<-punif(cond, a, b)
             }
             
-            p <- ggplot()+
-                geom_line(aes(x = cond, y=cumulative),col = "red", alpha = 0.5)+
-                theme_light()+
-                ggtitle(str_replace("Distribuição acumulada de uma variável aleatória ttt","ttt",vet))+
-                ylab("Acumulada")+
-                xlab(expression(x))+
-                theme(panel.grid = element_blank())
+            if (vet == "Normal" & a==0 & b==1){
+                p <- ggplot()+
+                    geom_line(aes(x = cond, y=cumulative),col = "red", alpha = 0.5)+
+                    theme_light()+
+                    ggtitle(str_replace("Distribuição acumulada de uma variável aleatória ttt Padrão","ttt",vet))+
+                    ylab("Acumulada")+
+                    xlab(expression(x))+
+                    theme(panel.grid = element_blank(),
+                          title = element_text(size = 8))
+            } else {
+                p <- ggplot()+
+                    geom_line(aes(x = cond, y=cumulative),col = "red", alpha = 0.5)+
+                    theme_light()+
+                    ggtitle(str_replace("Distribuição acumulada de uma variável aleatória ttt","ttt",vet))+
+                    ylab("Acumulada")+
+                    xlab(expression(x))+
+                    theme(panel.grid = element_blank(),
+                          title = element_text(size = 8))
+            }
             
         } else {
             # Conditions ####
@@ -545,7 +598,8 @@ shinyServer(function(input, output, session) {
                 ggtitle(str_replace("Distribuição acumulada de uma variável aleatória ttt","ttt",vet))+
                 ylab("Acumulada")+
                 xlab(expression(x))+
-                theme(panel.grid = element_blank())
+                theme(panel.grid = element_blank(),
+                      title = element_text(size = 8))
         }
         return(p)
     }
@@ -557,7 +611,7 @@ shinyServer(function(input, output, session) {
             limb <- NA
             x <- rnorm(10000,input$a1,input$b2)
             Y <- switch (input$tran1,
-                         "(X-m)/s" = (x - input$a1)/sqrt(input$b2),
+                         "(X-m)/s" = (x - mean(x))/sd(x),
                          "X + a" = (x + input$c3),
                          "bX" = (input$c3*x)
             )
@@ -912,45 +966,49 @@ shinyServer(function(input, output, session) {
         if (input$var1 == "Normal Padrão"){
             p1 <- qplot(rnorm(10000), geom = 'blank') +   
                 stat_function(fun = dnorm, n=10000,
-                              args = list(mean = 0, sd = 1), colour = "red")+
+                              args = list(mean = 0, sd = 1), colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Normal Padrão")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Normal Padrão")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +   
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
                 ylim(0,1)+
-                ggtitle("Histograma da variável aleatória transformada")+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))
         }
         else if (input$var1 == "Uniforme Padrão"){
             p1 <- qplot(runif(10000), geom = 'blank') +   
                 stat_function(fun = dunif, n=10000,
-                              args = list(min = 0, max = 1), colour = "red")+
+                              args = list(min = 0, max = 1), colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Uniforme Padrão")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Uniforme Padrão")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma da variável aleatória transformada")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))+
                 ylim(0,6)
@@ -958,138 +1016,146 @@ shinyServer(function(input, output, session) {
         else if (input$var1 == "Qui-Quadrado"){
             p1 <- qplot(rchisq(10000,input$a1), geom = 'blank') +   
                 stat_function(fun = dchisq, n=10000,
-                              args = list(df = input$a1), colour = "red")+
+                              args = list(df = input$a1), colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 ylim(0,6)+
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Qui-Quadrado")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Qui-Quadrado")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 ylim(0,6)+
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma da variável aleatória transformada")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))
         } else if (input$var1 == "Normal"){
             p1 <- qplot(rnorm(10000,input$a1,input$b2), geom = 'blank') +   
                 stat_function(fun = dnorm, n=10000,
-                              args = list(mean = input$a1, sd = input$b2), colour = "red")+
+                              args = list(mean = input$a1, sd = input$b2), colour = "red",inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Normal")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Normal")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +   
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma da variável aleatória transformada")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))
             
         } else if (input$var1 == "Exponencial"){
             p1 <- qplot(rexp(10000,input$a1), geom = 'blank') +   
                 stat_function(fun = dexp, n=10000,
-                              args = list(rate = input$a1), colour = "red")+
+                              args = list(rate = input$a1), colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Exponencial")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Exponencial")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +   
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma da variável aleatória transformada")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))
         } else if (input$var1 == "Beta"){
             p1 <- qplot(rbeta(10000,input$a1,input$b2), geom = 'blank') +   
                 stat_function(fun = dbeta, n=10000,
-                              args = list(shape1 = input$a1, shape2 = input$b2), colour = "red")+
+                              args = list(shape1 = input$a1, shape2 = input$b2), colour = "red",inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Beta")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Beta")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +   
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma da variável aleatória transformada")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))
         } else if (input$var1 == "Beta Padrão"){
             p1 <- qplot(rbeta(10000,input$a1,1), geom = 'blank') +   
                 stat_function(fun = dbeta, n=10000,
-                              args = list(shape1 = input$a1, shape2 = 1), colour = "red")+
+                              args = list(shape1 = input$a1, shape2 = 1), colour = "red",inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Beta Padrão")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Beta Padrão")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +   
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma da variável aleatória transformada")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))
         } else if (input$var1 == "Gama"){
             p1 <- qplot(rgamma(10000,input$a1,input$b2), geom = 'blank') +   
                 stat_function(fun = dgamma, n=10000,
-                              args = list(shape = input$a1, rate = input$b2), colour = "red")+
+                              args = list(shape = input$a1, rate = input$b2), colour = "red",inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma de uma variável aleatória Gama")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma de uma amostra da variável aleatória Gama")+
                 ylab(" ")+
                 xlab(expression(x))
             p2 <- qplot(escolha1[[2]], geom = 'blank') +   
                 stat_function(fun = escolha1[[1]], n=length(escolha1[[4]]),
-                              args = escolha1[[3]], colour = "red")+
+                              args = escolha1[[3]], colour = "red",
+                              inherit.aes = FALSE)+
                 geom_histogram(aes(y = ..density..),
                                alpha = 0.4, fill = "cadetblue4", color = "white") +
                 theme_light()+
-                theme(panel.grid = element_blank())+
-                ggtitle("Histograma da variável aleatória transformada")+
+                theme(panel.grid = element_blank(),title = element_text(size = 10))+
+                ggtitle("Histograma da amostra da variável aleatória transformada")+
                 ylab(" ")+
                 xlab(expression(x))
-        } 
+        }
         
         gridExtra::grid.arrange(p1,p2,nrow=1)
     })
-    # Terceira tab ####
     
+    # Terceira tab ####
     output$txt_5 <- renderText("Aluno: Wesley Almeida Cruz")
     output$txt_6 <- renderText("Orientador: Moisés")
     
@@ -1105,7 +1171,8 @@ shinyServer(function(input, output, session) {
                 probabi <- pnorm(c,a,b)
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = esqu, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
                     xlab(expression(x)) +
@@ -1118,7 +1185,8 @@ shinyServer(function(input, output, session) {
                 probabi <- pnorm(d,a,b,lower.tail = F)
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = dire, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
                     xlab(expression(x)) +
@@ -1134,7 +1202,8 @@ shinyServer(function(input, output, session) {
                 
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = esqu, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     geom_ribbon(aes(x = dire, ymin = 0, ymax = prob1),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
@@ -1149,7 +1218,8 @@ shinyServer(function(input, output, session) {
                 
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = cond, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
                     xlab(expression(x)) +
@@ -1169,7 +1239,8 @@ shinyServer(function(input, output, session) {
                 probabi <- pt(c,a)
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = esqu, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
                     xlab(expression(x)) +
@@ -1182,7 +1253,8 @@ shinyServer(function(input, output, session) {
                 probabi <- pt(d,a,lower.tail = F)
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = dire, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
                     xlab(expression(x)) +
@@ -1198,7 +1270,8 @@ shinyServer(function(input, output, session) {
                 
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = esqu, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     geom_ribbon(aes(x = dire, ymin = 0, ymax = prob1),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
@@ -1213,7 +1286,8 @@ shinyServer(function(input, output, session) {
                 
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = cond, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     ylab("Função densidade")+
                     xlab(expression(x)) +
@@ -1222,7 +1296,7 @@ shinyServer(function(input, output, session) {
                           panel.grid = element_blank())
             }
         }
-        else if(x == "f-Snedecor"){
+        else if(x == "F-Snedecor"){
             func <- df
             argu <- list(df1 = a, df2=b)
             cond1 <- seq(qf(0.001,a,b),qf(0.999,a,b),length.out = 1000)
@@ -1233,11 +1307,13 @@ shinyServer(function(input, output, session) {
                 probabi <- pf(c,a,b)
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
-                    geom_ribbon(aes(x = esqu, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
+                    geom_ribbon(aes(x = esqu, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4)+
                     ylab("Função densidade")+
                     xlab(expression(x)) +
                     theme_light()+
+                    xlim(0,5)+
                     theme(legend.position = "None",
                           panel.grid = element_blank())
             } else if(input$escol == "Direita"){
@@ -1246,8 +1322,10 @@ shinyServer(function(input, output, session) {
                 probabi <- pf(d,a,b,lower.tail = F)
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = dire, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
+                    xlim(0,5)+
                     ylab("Função densidade")+
                     xlab(expression(x)) +
                     theme_light()+
@@ -1262,9 +1340,11 @@ shinyServer(function(input, output, session) {
                 
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = esqu, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
                     geom_ribbon(aes(x = dire, ymin = 0, ymax = prob1),fill = "blue", alpha = 0.4) +
+                    xlim(0,5)+
                     ylab("Função densidade")+
                     xlab(expression(x)) +
                     theme_light()+
@@ -1277,8 +1357,10 @@ shinyServer(function(input, output, session) {
                 
                 p <- qplot(cond1,geom = 'blank') +   
                     stat_function(fun = func, n=length(cond1),
-                                  args = argu, color = "blue")+
+                                  args = argu, color = "blue",
+                                  inherit.aes = FALSE)+
                     geom_ribbon(aes(x = cond, ymin = 0, ymax = prob),fill = "blue", alpha = 0.4) +
+                    xlim(0,5)+
                     ylab("Função densidade")+
                     xlab(expression(x)) +
                     theme_light()+

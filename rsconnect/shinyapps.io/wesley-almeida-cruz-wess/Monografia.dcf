@@ -5,8 +5,9 @@ account: wesley-almeida-cruz-wess
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3623426
-bundleId: 4997905
+bundleId: 5057152
 url: https://wesley-almeida-cruz-wess.shinyapps.io/Monografia/
-when: 1630695584.01382
+when: 1632250767.68704
+lastSyncTime: 1632250767.68704
 asMultiple: FALSE
 asStatic: FALSE
